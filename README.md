@@ -1,5 +1,5 @@
 # Instagram-User-Analytics
-<img src="https://wallpapers.com/images/hd/cool-instagram-c3aflwmbrjkdspys.jpg"  height=400px width=1100px>
+<img src="https://cmgventures.com/wp-content/uploads/2018/04/instagram-banner-01.png"  height=400px width=1100px>
 
 # Instagram Data Analysis Project
 
