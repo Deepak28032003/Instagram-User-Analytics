@@ -1,0 +1,144 @@
+use ig_clone;
+-- Find the five oldest users of the instagram
+
+-- Way 1 
+SELECT * FROM users
+WHERE id IN ( SELECT user_id FROM photos)
+ORDER BY created_at ASC
+LIMIT 5;
+
+-- Way 2
+WITH extracted_time as (
+SELECT 
+    id,
+    username,
+    created_at,
+    EXTRACT(YEAR FROM created_at),
+    EXTRACT(MONTH FROM created_at),
+    EXTRACT(DAY FROM created_at),
+    EXTRACT(HOUR FROM created_at),
+    EXTRACT(MINUTE FROM created_at),
+    EXTRACT(SECOND FROM created_at)
+FROM
+    users
+ORDER BY 4 , 5 , 6 , 7 , 8 , 9
+)
+SELECT 
+	id,
+    username,
+    created_at 
+from extracted_time
+limit 5;
+
+-- Find the users who have never posted a single photo on instagram
+select * from photos;
+
+-- Way 1 : Without using JOIN
+SELECT id, username
+FROM users
+WHERE id NOT IN ( 	SELECT user_id
+					FROM photos		);
+
+-- Way 2: With using join
+SELECT 
+    users.id, username, image_url
+FROM
+    users
+        LEFT JOIN
+    photos ON users.id = photos.user_id
+WHERE
+    image_url IS NULL;
+    
+-- Find the user who gets the most like on a single photo to reward them
+select * from likes;
+SELECT 
+    *
+FROM
+    photo_tags
+        INNER JOIN
+    tags ON photo_tags.tag_id = tags.id
+WHERE
+    photo_id = 145;
+
+SELECT 
+    photo_id, COUNT(likes.user_id) AS likes, username
+FROM likes
+        INNER JOIN photos ON photos.id = likes.photo_id
+        INNER JOIN users ON users.id = photos.user_id
+GROUP BY photo_id
+ORDER BY likes DESC
+LIMIT 1;
+
+-- Identify and suggest top 5 commonly used hashtags on the platform
+select * from photo_tags;
+select * from tags;
+
+SELECT 
+    tag_id, tag_name, COUNT(photo_id) AS tag_used
+FROM
+    photo_tags INNER JOIN tags ON photo_tags.tag_id = tags.id
+GROUP BY tag_id
+ORDER BY tag_used DESC
+LIMIT 5;
+
+-- What day of the week do most users register on ? 
+select  * from users;
+
+SELECT 
+    CASE
+        WHEN WEEKDAY(created_at) = 0 THEN 'MONDAY'
+        WHEN WEEKDAY(created_at) = 1 THEN 'TUESDAY'
+        WHEN WEEKDAY(created_at) = 2 THEN 'WEDNESDAY'
+        WHEN WEEKDAY(created_at) = 3 THEN 'THURSDAY'
+        WHEN WEEKDAY(created_at) = 4 THEN 'FRIDAY'
+        WHEN WEEKDAY(created_at) = 5 THEN 'SATURDAY'
+        WHEN WEEKDAY(created_at) = 6 THEN 'SUNDAY'
+    END AS `day`,
+    COUNT(username) AS No_of_reg_users
+FROM users
+GROUP BY `day`;
+
+-- Provide how many times does average user posts on instagram.
+-- Total number of photos on instagram
+-- Total number of users instagram
+
+select * from photos;
+
+with postcount as (
+SELECT 
+    user_id, COUNT(id) AS No_of_posts
+FROM
+    photos
+GROUP BY user_id
+)
+SELECT 
+    AVG(No_of_posts) AS Post_Average
+FROM
+    postcount;
+    
+-- Number of photos
+WITH total_photos AS( 
+		SELECT COUNT(DISTINCT id) AS No_of_photos
+		FROM photos ), 
+	 total_users AS ( 
+		SELECT COUNT(DISTINCT id) AS No_of_users
+		FROM users	)
+SELECT No_of_photos, No_of_users,
+	   total_photos.No_of_photos/total_users.No_of_users AS average_photos
+FROM total_photos,total_users; 
+    
+-- Provide data on users(bots) who have liked every single photo on the site
+select * from likes;
+
+SELECT 
+    COUNT(DISTINCT photo_id) as No_of_photos
+FROM
+    likes;
+
+WITH botsdata AS( 	SELECT user_id, COUNT(photo_id) AS Likes_Given
+					FROM likes
+					GROUP BY user_id
+					HAVING Likes_Given = 257	)
+SELECT COUNT(user_id) AS No_of_bots
+FROM botsdata;
+
