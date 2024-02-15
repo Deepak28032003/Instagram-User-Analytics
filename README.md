@@ -1,5 +1,5 @@
 # Instagram-User-Analytics
-<img src="[https://du-assassins.in/wp-content/uploads/2018/12/Top-10-Colege-Fests-India.jpg](https://wallpapers.com/images/hd/cool-instagram-c3aflwmbrjkdspys.jpg)" height=250px width=1100px>
+<img src="https://wallpapers.com/images/hd/cool-instagram-c3aflwmbrjkdspys.jpg"  height=400px width=1100px>
 
 # Instagram Data Analysis Project
 
